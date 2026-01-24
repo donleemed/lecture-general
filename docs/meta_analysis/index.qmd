@@ -92,6 +92,459 @@ subtitle: "Zarathu Co., Ltd"
 - 어떤 지표든 Measure값과 S.E(or 95%CI) 가 있으면 가능
 
 
+## Mean difference (MD)
+
+![](example/md.png)
+
+## MD vs SMD
+
+**MD (Mean Difference)**
+
+- 두 그룹의 평균 차이 그대로
+- 모든 연구가 **같은 단위/척도** 사용할 때
+
+<br>
+
+**SMD (Standardized Mean Difference)**
+
+$$SMD = \frac{\bar{X}_T - \bar{X}_C}{S_{pooled}}$$
+
+- 평균 차이를 **표준편차로 나눔** (단위 제거)
+- 서로 **다른 척도**로 측정한 연구 합칠 때 (예: 우울증 - BDI vs HAM-D)
+
+<br>
+
+| SMD (Cohen's d) | 해석 |
+|-----------------|------|
+| 0.2 | 작은 효과 (Small) |
+| 0.5 | 중간 효과 (Medium) |
+| 0.8 | 큰 효과 (Large) |
+
+## Relative risk(Risk ratio)
+
+![](example/RR.png)
+
+## RR, OR, RD: 2x2 테이블
+
+|              | Disease+ | Disease- |       |
+|--------------|----------|----------|-------|
+| **Treatment**| a        | b        | a+b   |
+| **Control**  | c        | d        | c+d   |
+
+::: {.columns}
+::: {.column width="33%"}
+**RR (Risk Ratio)**
+
+$$\frac{a/(a+b)}{c/(c+d)}$$
+
+위험률의 **비율**
+:::
+::: {.column width="33%"}
+**OR (Odds Ratio)**
+
+$$\frac{a/b}{c/d} = \frac{ad}{bc}$$
+
+오즈의 **비율**
+:::
+::: {.column width="33%"}
+**RD (Risk Difference)**
+
+$$\frac{a}{a+b} - \frac{c}{c+d}$$
+
+위험률의 **차이**
+:::
+:::
+
+## RR, OR, RD: 예시
+
+|           | 사망 | 생존 |        |
+|-----------|------|------|--------|
+| **신약**  | 10   | 90   | 100명 (10%) |
+| **위약**  | 20   | 80   | 100명 (20%) |
+
+<br>
+
+- **RR** = 0.1 / 0.2 = **0.5** → "신약 쓰면 사망위험 **절반**"
+
+- **OR** = (10×80) / (90×20) = **0.44** → RR과 비슷 (희귀질환일수록 유사)
+
+- **RD** = 0.1 - 0.2 = **-0.1** → "**10%p** 사망 감소", NNT = 10
+
+## RR, OR, RD: 언제 쓰나?
+
+| 지표 | 장점 | 주 사용처 |
+|------|------|-----------|
+| **RR** | 가장 직관적 ("몇 배") | RCT, 코호트 |
+| **OR** | Case-control에서 유일하게 계산 가능 | Case-control, 로지스틱 회귀 |
+| **RD** | 절대 효과크기, NNT 계산 | 임상적 의사결정 |
+
+<br>
+
+::: {.callout-note}
+희귀 질환(발생률 < 10%)에서는 **OR ≈ RR**
+:::
+
+
+## Case-control 연구란?
+
+**코호트**: 노출군/비노출군 모아서 → 질병 발생 **추적**
+
+**Case-control**: 질병O(case)/질병X(control) 모아서 → 과거 노출 **조사**
+
+<br>
+
+::: {.columns}
+::: {.column width="50%"}
+**코호트** (전향적)
+```
+흡연자 1000명   →  폐암 50명
+비흡연자 1000명 →  폐암 5명
+```
+발생률 계산 가능!
+:::
+::: {.column width="50%"}
+**Case-control** (후향적)
+```
+폐암 100명   ← 흡연 80명
+정상 100명  ← 흡연 20명
+```
+case:control 비율은 **연구자 맘대로**
+:::
+:::
+
+## Case-control에서 왜 RR 안됨?
+
+|              | 폐암 | 정상 |       |
+|--------------|------|------|-------|
+| **흡연**     | 80   | 20   | 100   |
+| **비흡연**   | 20   | 80   | 100   |
+
+
+
+- **RR** = (80/100) / (20/100) = 4? ❌
+
+- 100명, 100명은 **연구자가 정한 숫자**일 뿐, 실제 흡연자/비흡연자 수가 아님!
+
+- $$\text{OR} = \frac{a/b}{c/d} = \frac{a/c}{b/d} = \frac{ad}{bc} = 16 $$
+
+- $\frac{a/b}{c/d}$: 노출군 오즈 / 비노출군 오즈 → **코호트 관점**
+
+- $\frac{a/c}{b/d}$: case 노출률 / control 노출률 → **case-control 관점**
+
+- 둘 다 **ad/bc** → OR은 코호트, case-control **둘 다 사용 가능!**
+
+
+## Event/N 없다면?
+
+- 어떤 지표든 그 추정값과 95%CI(또는 standard error) 만 있으면 됨. 
+
+```{r}
+library(jskm);library(survival)
+cc <- survfit(Surv(time, status) ~ sex, data = colon)
+jskm(cc, table = T, hr = T, marks = F, hr.coord = c(1000, 0.2), timeby = 365, ystratalabs = c("Female", "Male"), ystrataname = "Sex")
+```
+
+## HR(Hazard ratio)
+
+![](example/hr.png)
+
+## 메타분석 계산: Fixed Effect Model
+
+**개별 연구를 가중 평균**으로 합친다
+
+$$\hat{\theta}_{pooled} = \frac{\sum w_i \hat{\theta}_i}{\sum w_i}$$
+
+- $\hat{\theta}_i$: 각 연구의 추정값 (MD, log OR, log RR 등)
+- $w_i$: 가중치 (정밀한 연구에 큰 가중치)
+
+<br>
+
+**가중치 계산 방법이 2가지**
+
+| 데이터 | 방법 | 가중치 |
+|--------|------|--------|
+| Mean(sd), N | **IV** (Inverse Variance) | $w_i = 1/Var_i$ |
+| 2×2 테이블 | **MH** (Mantel-Haenszel) | 테이블 기반 공식 |
+
+## IV (Inverse Variance) 방법
+
+**분산의 역수 = 가중치**
+
+$$w_i = \frac{1}{Var(\hat{\theta}_i)}$$
+
+- 분산 작은(정밀한) 연구 → 가중치 큼
+- **연속형**(MD, SMD)에서 기본 사용
+- 범용적: 추정값 + SE만 있으면 다 가능
+
+<br>
+
+**Mean difference 예시**
+
+$$Var(MD) = \frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}$$
+
+## MH (Mantel-Haenszel) 방법
+
+**2×2 테이블 직접 이용** (log 변환 없이)
+
+|              | Event | No Event |       |
+|--------------|-------|----------|-------|
+| Treatment    | a     | b        | n1    |
+| Control      | c     | d        | n2    |
+
+<br>
+
+**OR의 MH 가중치**
+
+$$w_i = \frac{b_i c_i}{n_{1i} + n_{2i}}$$
+
+- 이벤트 적은 sparse data에 robust
+- **이분형**(RR, OR, RD) 기본 방법
+
+## 2×2 테이블도 IV로 가능
+
+**log 변환하면 IV 사용 가능!**
+
+$$\log(OR) = \log\left(\frac{ad}{bc}\right)$$
+
+$$Var(\log OR) = \frac{1}{a} + \frac{1}{b} + \frac{1}{c} + \frac{1}{d}$$
+
+<br>
+
+| 방법 | 장점 | 단점 |
+|------|------|------|
+| **MH** | sparse data에 강함, 직관적 | 2×2 테이블 필요, **Fixed만** |
+| **IV** | 범용적, Fixed + Random 둘 다 | 0셀 있으면 보정 필요 |
+
+::: {.callout-tip}
+**Random effect는 IV 기반** (τ² 추정이 IV 기반이라서)
+:::
+
+## Fixed Effect의 문제점
+
+**가정: 모든 연구의 true effect가 동일하다**
+
+$$\theta_1 = \theta_2 = \cdots = \theta_k = \theta$$
+
+<br>
+
+**문제: SE 작은 연구가 가중치 독식**
+
+| 연구 | 효과 | SE | 가중치 (1/Var) |
+|------|------|-----|----------------|
+| A (n=10000) | 0.8 | 0.05 | **400** |
+| B (n=100) | 1.5 | 0.5 | 4 |
+| C (n=100) | 1.3 | 0.5 | 4 |
+
+→ 연구 A가 결과의 98%를 결정!
+
+## Random Effect Model
+
+**가정: 각 연구의 true effect가 다를 수 있다**
+
+$$\theta_i \sim N(\mu, \tau^2)$$
+
+- $\mu$: 전체 평균 효과
+- $\tau^2$: **연구 간 분산** (between-study variance)
+
+<br>
+
+**가중치에 τ² 추가**
+
+$$w_i^{RE} = \frac{1}{Var_i + \tau^2}$$
+
+→ 큰 연구의 가중치 독식 완화!
+
+## Fixed vs Random 비교
+
+|  | Fixed | Random |
+|--|-------|--------|
+| **가정** | 모든 연구 true effect 동일 | 연구마다 다를 수 있음 |
+| **가중치** | $1/Var_i$ | $1/(Var_i + \tau^2)$ |
+| **큰 연구** | 가중치 독식 가능 | 완화됨 |
+| **일반화** | 포함된 연구에만 | 더 넓은 모집단에 |
+
+<br>
+
+::: {.callout-important}
+**현재 추세: Random effect를 기본으로 사용**
+
+연구들이 완전히 동일할 수 없으므로 보수적인 Random 선호
+:::
+
+## Heterogeneity 지표
+
+**연구들이 얼마나 다른가?**
+
+<br>
+
+**1. Q statistic (Cochran's Q)**
+
+$$Q = \sum w_i (\hat{\theta}_i - \hat{\theta}_{pooled})^2$$
+
+- 카이제곱 분포, df = k-1
+- p < 0.05 → 이질성 있음 (but 검정력 낮음)
+
+<br>
+
+**2. I² (가장 많이 씀)**
+
+$$I^2 = \frac{Q - (k-1)}{Q} \times 100\%$$
+
+- 전체 변동 중 **연구 간 차이**가 차지하는 비율
+
+## I² 해석
+
+| I² | 이질성 정도 |
+|----|-------------|
+| 0-25% | 낮음 (Low) |
+| 25-50% | 중간 (Moderate) |
+| 50-75% | 높음 (Substantial) |
+| 75-100% | 매우 높음 (Considerable) |
+
+<br>
+
+**3. τ² (tau-squared)**
+
+- 연구 간 분산의 **절대값**
+- I²는 비율, τ²는 실제 크기
+
+::: {.callout-note}
+I² 높으면 → subgroup 분석, meta-regression 고려
+:::
+
+
+## R 결과 화면 
+
+```r
+Number of studies: k = 5
+Number of observations: o = 1046 (o.e = 532, o.c = 514)
+Number of events: e = 227
+
+                         OR           95%-CI     z p-value
+Common effect model  0.7066 [0.5260; 0.9491] -2.31  0.0211
+Random effects model 0.7417 [0.4609; 1.1936] -1.23  0.2183
+
+Quantifying heterogeneity (with 95%-CIs):
+ tau^2 = 0.0888 [0.0000; 4.5875]; tau = 0.2981 [0.0000; 2.1418]
+ I^2 = 30.8% [0.0%; 73.4%]; H = 1.20 [1.00; 1.94]
+
+Test of heterogeneity:
+    Q d.f. p-value
+ 5.78    4  0.2159
+
+Details of meta-analysis methods:
+- Mantel-Haenszel method (common effect model)
+- Inverse variance method (random effects model)
+- Restricted maximum-likelihood estimator for tau^2
+- Q-Profile method for confidence interval of tau^2 and tau
+- Calculation of I^2 based on Q
+```
+
+## Forestplot
+
+![](example/subgroup.png){width="85%"}
+
+## Forestplot 해석
+
+**메타분석의 대표 시각화**
+
+- 각 연구: **점**(효과 크기) + **선**(95% CI)
+- **점 크기** = 가중치 (클수록 영향력 큼)
+- **다이아몬드** = pooled estimate (폭 = 95% CI)
+- **세로선** = null effect (OR=1, RR=1, MD=0)
+
+<br>
+
+::: {.callout-tip}
+다이아몬드가 세로선과 안 겹치면 → 통계적으로 유의
+:::
+
+## Funnel plot
+
+![](example/funnel.png){width="70%"}
+
+## Funnel plot 해석
+
+**Publication bias 확인용**
+
+- **X축**: 효과 크기 (OR, RR 등)
+- **Y축**: SE (위로 갈수록 정밀한 연구)
+
+<br>
+
+| 모양 | 해석 |
+|------|------|
+| ✅ **대칭** | bias 없음 |
+| ❌ **비대칭** | publication bias 의심 |
+
+→ 유의하지 않은 작은 연구가 출판 안 돼서 한쪽이 비는 현상
+
+<br>
+
+**통계 검정**: Egger's test, Begg's test (연구 < 10개면 검정력 부족)
+
+## Drapery plot (필수는 아님)
+
+![](example/drapery.png){width="75%"}
+
+- 각 연구의 **p-value function**을 연속적으로 표시
+- 0.05에만 집착하지 않고 다양한 α에서 해석 가능
+
+## 심화: Egger's test
+
+**Funnel plot 비대칭의 통계 검정**
+
+$$\frac{\hat{\theta}_i}{SE_i} = \beta_0 + \beta_1 \cdot \frac{1}{SE_i}$$
+
+- 효과크기를 SE로 나눈 값(standardized effect)을 1/SE에 회귀
+- **H₀**: $\beta_0 = 0$ (절편 = 0이면 대칭)
+- p < 0.05 → funnel plot 비대칭 → publication bias 의심
+
+<br>
+
+::: {.callout-warning}
+**한계**: 연구 수 < 10개면 검정력 부족, 이질성 높으면 위양성
+:::
+
+## 심화: Trim & Fill method
+
+**Publication bias 보정 방법**
+
+::: {.columns}
+::: {.column width="50%"}
+**Step 1: Trim**
+
+- 비대칭 유발하는 연구들 제거
+- 대칭이 될 때까지 반복
+
+**Step 2: Fill**
+
+- 제거한 연구의 "거울상" 가상 연구 추가
+- 대칭적인 funnel plot 완성
+:::
+::: {.column width="50%"}
+```
+     Before          After (Fill)
+       ●                 ●
+      ● ●               ● ●
+     ●   ●             ●   ●
+    ●     ●    →      ●  ◐  ●
+   ●                  ● ◐   ●
+                        ◐
+   (비대칭)            (대칭 + 가상연구)
+```
+:::
+:::
+
+<br>
+
+**보정된 pooled estimate** 제시 → 원래 결과와 비교
+
+## 실습: openstat.ai 
+
+![](example/openstat.png)
+
+
 ## Executive summary
 
 **동일한 결과지표를 가진 연구들을 합친다**
