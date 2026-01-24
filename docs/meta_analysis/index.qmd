@@ -1,0 +1,117 @@
+---
+title: "메타분석"
+author: "김진섭"
+date: "2026-02-03"
+format:
+  revealjs: 
+    theme: zarathu_theme.scss
+    title-slide-attributes:
+      data-background-image: bg.png
+      data-background-size: cover
+      data-background-opacity: "0.3"
+    logo: Zarathu Circle Clipping Mask2.png
+    footer: "openstat.ai"
+    self-contained: false
+    chalkboard: 
+      buttons: false
+    preview-links: true
+    show-notes: false
+    slide-number: false
+    width: 1600
+    height: 900
+editor: visual
+subtitle: "Zarathu Co., Ltd"
+---
+
+## 자기소개
+
+회사: 차라투 (Zarathu Co.,Ltd)
+
+-   R 활용 의학연구지원
+-   R 패키지 개발 및 교육
+
+경력
+
+-   의학사, 성균관대학교 (\~2009)
+-   예방의학전문의/박사수료,서울대보건대학원 (\~2013)
+-   책임, 삼성전자 DMC연구소/무선사업부 (\~2016)
+-   대표, 차라투 (2018\~)
+
+**jinseob2kim\@gmail.com, github.com/jinseob2kim**
+
+
+## Executive summary
+
+**동일한 결과지표를 가진 연구들을 합친다**
+
+- Mean, proportion: 그룹 1개
+
+- Ratio(RR, OR, ROM), difference(MD, SMD): 그룹 2개 비교 
+
+- 그룹별 **Mean(sd) 또는 Event/N 값이 필요**,  Measure(95%CI) 만 있어도 가능. 
+
+**Inversed variance: Fixed effect vs Random effect**
+
+- 분산이 작은 연구에 가중치를 주지만, 한 연구의 영향력이 너무 커지는건 싫다.
+
+**`Forestplot` 으로 표시한다**
+
+- 검증위해 `funnel plot`, heterogeneity 지표 필요
+
+[openstat.ai](https://openstat.ai) 에서 메타분석 수행 가능
+
+- R [meta](https://doing-meta.guide/) 패키지로도 구현가능
+
+
+
+## Systematic review
+
+사실 포함해야 할 연구들을 고르는게 가장 어렵다. 
+
+- 같은 연구주제
+
+- 인구집단이 너무 차이나면 안됨(서양 vs 동양, 소아 vs 노인, 남 vs 여)
+
+- 같은 결과지표: Mean과 Median, Ratio 와 Difference를 합칠 순 없다. 
+
+
+## 지표 종류 
+
+1그룹 단일지표 
+
+- Mean(sd), event/N(%)
+
+- Median은 불가능(?) : [최신 방법론 필요](https://github.com/stmcg/metamedian)
+
+**2그룹 비교: 대부분** 
+
+- Mean: Difference, ratio
+
+- event/N(%): Ratio(RR, OR), Difference(RD)
+
+- 어떤 지표든 Measure값과 S.E(or 95%CI) 가 있으면 가능
+
+
+## Executive summary
+
+**동일한 결과지표를 가진 연구들을 합친다**
+
+- Mean, proportion: 그룹 1개
+
+- Ratio(RR, OR, ROM), difference(MD, SMD): 그룹 2개 비교 
+
+- 그룹별 **Mean(sd) 또는 Event/N 값이 필요**,  Measure(95%CI) 만 있어도 가능. 
+
+**Inversed variance: Fixed effect vs Random effect**
+
+- 분산이 작은 연구에 가중치를 주지만, 한 연구의 영향력이 너무 커지는건 싫다.
+
+**`Forestplot` 으로 표시한다**
+
+- 검증위해 `funnel plot`, heterogeneity 지표 필요
+
+[openstat.ai](https://openstat.ai) 에서 메타분석 수행 가능
+
+- R [meta](https://doing-meta.guide/) 패키지로도 구현가능
+
+# 감사합니다.
