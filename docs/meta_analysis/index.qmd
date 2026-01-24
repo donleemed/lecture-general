@@ -97,6 +97,26 @@ Included         최종 포함 (n=50)
 - 저널 투고시 거의 **필수**
 - [PRISMA 공식 사이트](http://www.prisma-statement.org/)에서 템플릿 제공
 
+## Risk of Bias (ROB)
+
+**포함된 연구들의 질(Quality) 평가**
+
+| Study | 무작위배정 | 배정은닉 | 눈가림 | 결측 | 선택보고 |
+|-------|:---:|:---:|:---:|:---:|:---:|
+| A | 🟢 | 🟢 | 🟡 | 🟢 | 🟢 |
+| B | 🟢 | 🟡 | 🔴 | 🟢 | 🟢 |
+| C | 🟢 | 🟢 | 🟢 | 🟡 | 🟢 |
+| D | 🟡 | 🔴 | 🔴 | 🟢 | 🟢 |
+
+🟢 Low risk / 🟡 Unclear / 🔴 High risk
+
+- **RCT**: Cochrane ROB 2.0
+- **관찰연구**: Newcastle-Ottawa Scale (NOS)
+
+## Risk of Bias: 실제 예시
+
+![](example/riskofbias.png){width="80%"}
+
 ## 지표 종류 
 
 1그룹 단일지표 
