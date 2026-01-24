@@ -254,6 +254,25 @@
 <li><p>같은 결과지표: Mean과 Median, Ratio 와 Difference를 합칠 순 없다.</p></li>
 </ul>
 </section>
+<section id="prisma-flow-diagram" class="slide level2">
+<h2>PRISMA Flow Diagram</h2>
+<p><strong>연구 선정 과정을 투명하게 보여주는 표준 flowchart</strong></p>
+<p><br></p>
+<pre><code>Identification   DB 검색 (n=1000) + 기타 (n=50)
+                        ↓
+                   중복 제거 (n=800)
+                        ↓
+Screening        제목/초록 검토 → 제외 (n=500)
+                        ↓
+Eligibility      전문 검토 (n=300) → 제외 (n=250)
+                        ↓
+Included         최종 포함 (n=50)</code></pre>
+<p><br></p>
+<ul>
+<li>저널 투고시 거의 <strong>필수</strong></li>
+<li><a href="http://www.prisma-statement.org/">PRISMA 공식 사이트</a>에서 템플릿 제공</li>
+</ul>
+</section>
 <section id="지표-종류" class="slide level2">
 <h2>지표 종류</h2>
 <p>1그룹 단일지표</p>
@@ -274,38 +293,40 @@
 <img data-src="example/md.png" class="r-stretch"></section>
 <section id="md-vs-smd" class="slide level2">
 <h2>MD vs SMD</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
 <p><strong>MD (Mean Difference)</strong></p>
 <ul>
-<li>두 그룹의 평균 차이 그대로</li>
-<li>모든 연구가 <strong>같은 단위/척도</strong> 사용할 때</li>
+<li>평균 차이 <strong>그대로</strong></li>
+<li><strong>같은 단위</strong> 사용할 때</li>
 </ul>
-<p><br></p>
-<p><strong>SMD (Standardized Mean Difference)</strong></p>
-<p><span class="math display">\[SMD = \frac{\bar{X}_T - \bar{X}_C}{S_{pooled}}\]</span></p>
+</div><div class="column" style="width:50%;">
+<p><strong>SMD (Standardized MD)</strong></p>
 <ul>
-<li>평균 차이를 <strong>표준편차로 나눔</strong> (단위 제거)</li>
-<li>서로 <strong>다른 척도</strong>로 측정한 연구 합칠 때 (예: 우울증 - BDI vs HAM-D)</li>
+<li>평균 차이를 <strong>SD로 나눔</strong></li>
+<li><strong>다른 척도</strong> 합칠 때</li>
 </ul>
-<p><br></p>
+</div></div>
+<p><span class="math display">\[SMD = \frac{\bar{X}_T - \bar{X}_C}{S_{pooled}}\]</span></p>
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th>SMD (Cohen’s d)</th>
+<th>Cohen’s d</th>
 <th>해석</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>0.2</td>
-<td>작은 효과 (Small)</td>
+<td>Small</td>
 </tr>
 <tr class="even">
 <td>0.5</td>
-<td>중간 효과 (Medium)</td>
+<td>Medium</td>
 </tr>
 <tr class="odd">
 <td>0.8</td>
-<td>큰 효과 (Large)</td>
+<td>Large</td>
 </tr>
 </tbody>
 </table>
@@ -788,28 +809,28 @@
 </section>
 <section id="r-결과-화면" class="slide level2">
 <h2>R 결과 화면</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a>Number of studies<span class="sc">:</span> k <span class="ot">=</span> <span class="dv">5</span></span>
-<span id="cb3-2"><a href=""></a>Number of observations<span class="sc">:</span> o <span class="ot">=</span> <span class="dv">1046</span> (<span class="at">o.e =</span> <span class="dv">532</span>, <span class="at">o.c =</span> <span class="dv">514</span>)</span>
-<span id="cb3-3"><a href=""></a>Number of events<span class="sc">:</span> e <span class="ot">=</span> <span class="dv">227</span></span>
-<span id="cb3-4"><a href=""></a></span>
-<span id="cb3-5"><a href=""></a>                         OR           <span class="dv">95</span>%<span class="sc">-</span>CI     z p<span class="sc">-</span>value</span>
-<span id="cb3-6"><a href=""></a>Common effect model  <span class="fl">0.7066</span> [<span class="fl">0.5260</span>; <span class="fl">0.9491</span>] <span class="sc">-</span><span class="fl">2.31</span>  <span class="fl">0.0211</span></span>
-<span id="cb3-7"><a href=""></a>Random effects model <span class="fl">0.7417</span> [<span class="fl">0.4609</span>; <span class="fl">1.1936</span>] <span class="sc">-</span><span class="fl">1.23</span>  <span class="fl">0.2183</span></span>
-<span id="cb3-8"><a href=""></a></span>
-<span id="cb3-9"><a href=""></a>Quantifying <span class="fu">heterogeneity</span> (with <span class="dv">95</span>%<span class="sc">-</span>CIs)<span class="sc">:</span></span>
-<span id="cb3-10"><a href=""></a> tau<span class="sc">^</span><span class="dv">2</span> <span class="ot">=</span> <span class="fl">0.0888</span> [<span class="fl">0.0000</span>; <span class="fl">4.5875</span>]; tau <span class="ot">=</span> <span class="fl">0.2981</span> [<span class="fl">0.0000</span>; <span class="fl">2.1418</span>]</span>
-<span id="cb3-11"><a href=""></a> I<span class="sc">^</span><span class="dv">2</span> <span class="ot">=</span> <span class="fl">30.8</span><span class="sc">% [0.0%</span>; <span class="fl">73.4</span>%]; H <span class="ot">=</span> <span class="fl">1.20</span> [<span class="fl">1.00</span>; <span class="fl">1.94</span>]</span>
-<span id="cb3-12"><a href=""></a></span>
-<span id="cb3-13"><a href=""></a>Test of heterogeneity<span class="sc">:</span></span>
-<span id="cb3-14"><a href=""></a>    Q d.f. p<span class="sc">-</span>value</span>
-<span id="cb3-15"><a href=""></a> <span class="fl">5.78</span>    <span class="dv">4</span>  <span class="fl">0.2159</span></span>
-<span id="cb3-16"><a href=""></a></span>
-<span id="cb3-17"><a href=""></a>Details of meta<span class="sc">-</span>analysis methods<span class="sc">:</span></span>
-<span id="cb3-18"><a href=""></a><span class="sc">-</span> Mantel<span class="sc">-</span>Haenszel <span class="fu">method</span> (common effect model)</span>
-<span id="cb3-19"><a href=""></a><span class="sc">-</span> Inverse variance <span class="fu">method</span> (random effects model)</span>
-<span id="cb3-20"><a href=""></a><span class="sc">-</span> Restricted maximum<span class="sc">-</span>likelihood estimator <span class="cf">for</span> tau<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb3-21"><a href=""></a><span class="sc">-</span> Q<span class="sc">-</span>Profile method <span class="cf">for</span> confidence interval of tau<span class="sc">^</span><span class="dv">2</span> and tau</span>
-<span id="cb3-22"><a href=""></a><span class="sc">-</span> Calculation of I<span class="sc">^</span><span class="dv">2</span> based on Q</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a>Number of studies<span class="sc">:</span> k <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb4-2"><a href=""></a>Number of observations<span class="sc">:</span> o <span class="ot">=</span> <span class="dv">1046</span> (<span class="at">o.e =</span> <span class="dv">532</span>, <span class="at">o.c =</span> <span class="dv">514</span>)</span>
+<span id="cb4-3"><a href=""></a>Number of events<span class="sc">:</span> e <span class="ot">=</span> <span class="dv">227</span></span>
+<span id="cb4-4"><a href=""></a></span>
+<span id="cb4-5"><a href=""></a>                         OR           <span class="dv">95</span>%<span class="sc">-</span>CI     z p<span class="sc">-</span>value</span>
+<span id="cb4-6"><a href=""></a>Common effect model  <span class="fl">0.7066</span> [<span class="fl">0.5260</span>; <span class="fl">0.9491</span>] <span class="sc">-</span><span class="fl">2.31</span>  <span class="fl">0.0211</span></span>
+<span id="cb4-7"><a href=""></a>Random effects model <span class="fl">0.7417</span> [<span class="fl">0.4609</span>; <span class="fl">1.1936</span>] <span class="sc">-</span><span class="fl">1.23</span>  <span class="fl">0.2183</span></span>
+<span id="cb4-8"><a href=""></a></span>
+<span id="cb4-9"><a href=""></a>Quantifying <span class="fu">heterogeneity</span> (with <span class="dv">95</span>%<span class="sc">-</span>CIs)<span class="sc">:</span></span>
+<span id="cb4-10"><a href=""></a> tau<span class="sc">^</span><span class="dv">2</span> <span class="ot">=</span> <span class="fl">0.0888</span> [<span class="fl">0.0000</span>; <span class="fl">4.5875</span>]; tau <span class="ot">=</span> <span class="fl">0.2981</span> [<span class="fl">0.0000</span>; <span class="fl">2.1418</span>]</span>
+<span id="cb4-11"><a href=""></a> I<span class="sc">^</span><span class="dv">2</span> <span class="ot">=</span> <span class="fl">30.8</span><span class="sc">% [0.0%</span>; <span class="fl">73.4</span>%]; H <span class="ot">=</span> <span class="fl">1.20</span> [<span class="fl">1.00</span>; <span class="fl">1.94</span>]</span>
+<span id="cb4-12"><a href=""></a></span>
+<span id="cb4-13"><a href=""></a>Test of heterogeneity<span class="sc">:</span></span>
+<span id="cb4-14"><a href=""></a>    Q d.f. p<span class="sc">-</span>value</span>
+<span id="cb4-15"><a href=""></a> <span class="fl">5.78</span>    <span class="dv">4</span>  <span class="fl">0.2159</span></span>
+<span id="cb4-16"><a href=""></a></span>
+<span id="cb4-17"><a href=""></a>Details of meta<span class="sc">-</span>analysis methods<span class="sc">:</span></span>
+<span id="cb4-18"><a href=""></a><span class="sc">-</span> Mantel<span class="sc">-</span>Haenszel <span class="fu">method</span> (common effect model)</span>
+<span id="cb4-19"><a href=""></a><span class="sc">-</span> Inverse variance <span class="fu">method</span> (random effects model)</span>
+<span id="cb4-20"><a href=""></a><span class="sc">-</span> Restricted maximum<span class="sc">-</span>likelihood estimator <span class="cf">for</span> tau<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb4-21"><a href=""></a><span class="sc">-</span> Q<span class="sc">-</span>Profile method <span class="cf">for</span> confidence interval of tau<span class="sc">^</span><span class="dv">2</span> and tau</span>
+<span id="cb4-22"><a href=""></a><span class="sc">-</span> Calculation of I<span class="sc">^</span><span class="dv">2</span> based on Q</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="forestplot" class="slide level2">
 <h2>Forestplot</h2>
@@ -932,6 +953,26 @@
 </div></div>
 <p><br></p>
 <p><strong>보정된 pooled estimate</strong> 제시 → 원래 결과와 비교</p>
+</section>
+<section id="심화-이번-강의에서-제외" class="slide level2">
+<h2>심화: 이번 강의에서 제외</h2>
+<p><strong>Meta-regression</strong></p>
+<ul>
+<li>I² 높을 때: 이질성의 <strong>원인</strong>을 찾고 싶다</li>
+<li>연구 특성(출판년도, 평균나이, 용량 등)을 <strong>공변량</strong>으로 회귀분석</li>
+<li>예: “출판년도가 최근일수록 효과가 작아지는가?”</li>
+</ul>
+<p><br></p>
+<p><strong>Network Meta-analysis (NMA)</strong></p>
+<ul>
+<li>A vs B, B vs C 연구는 있는데 A vs C는 없다?</li>
+<li><strong>간접 비교</strong>로 A vs C 추정 가능</li>
+<li>여러 치료법을 <strong>순위</strong>로 비교 (SUCRA)</li>
+</ul>
+<pre><code>    A ─── B
+     \   /
+      \ /
+       C</code></pre>
 </section>
 <section id="실습-openstat.ai" class="slide level2">
 <h2>실습: openstat.ai</h2>

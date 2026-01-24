@@ -72,8 +72,30 @@ subtitle: "Zarathu Co., Ltd"
 
 - 인구집단이 너무 차이나면 안됨(서양 vs 동양, 소아 vs 노인, 남 vs 여)
 
-- 같은 결과지표: Mean과 Median, Ratio 와 Difference를 합칠 순 없다. 
+- 같은 결과지표: Mean과 Median, Ratio 와 Difference를 합칠 순 없다.
 
+## PRISMA Flow Diagram
+
+**연구 선정 과정을 투명하게 보여주는 표준 flowchart**
+
+<br>
+
+```
+Identification   DB 검색 (n=1000) + 기타 (n=50)
+                        ↓
+                   중복 제거 (n=800)
+                        ↓
+Screening        제목/초록 검토 → 제외 (n=500)
+                        ↓
+Eligibility      전문 검토 (n=300) → 제외 (n=250)
+                        ↓
+Included         최종 포함 (n=50)
+```
+
+<br>
+
+- 저널 투고시 거의 **필수**
+- [PRISMA 공식 사이트](http://www.prisma-statement.org/)에서 템플릿 제공
 
 ## 지표 종류 
 
@@ -98,27 +120,28 @@ subtitle: "Zarathu Co., Ltd"
 
 ## MD vs SMD
 
+::: {.columns}
+::: {.column width="50%"}
 **MD (Mean Difference)**
 
-- 두 그룹의 평균 차이 그대로
-- 모든 연구가 **같은 단위/척도** 사용할 때
+- 평균 차이 **그대로**
+- **같은 단위** 사용할 때
+:::
+::: {.column width="50%"}
+**SMD (Standardized MD)**
 
-<br>
-
-**SMD (Standardized Mean Difference)**
+- 평균 차이를 **SD로 나눔**
+- **다른 척도** 합칠 때
+:::
+:::
 
 $$SMD = \frac{\bar{X}_T - \bar{X}_C}{S_{pooled}}$$
 
-- 평균 차이를 **표준편차로 나눔** (단위 제거)
-- 서로 **다른 척도**로 측정한 연구 합칠 때 (예: 우울증 - BDI vs HAM-D)
-
-<br>
-
-| SMD (Cohen's d) | 해석 |
-|-----------------|------|
-| 0.2 | 작은 효과 (Small) |
-| 0.5 | 중간 효과 (Medium) |
-| 0.8 | 큰 효과 (Large) |
+| Cohen's d | 해석 |
+|-----------|------|
+| 0.2 | Small |
+| 0.5 | Medium |
+| 0.8 | Large |
 
 ## Relative risk(Risk ratio)
 
@@ -539,6 +562,30 @@ $$\frac{\hat{\theta}_i}{SE_i} = \beta_0 + \beta_1 \cdot \frac{1}{SE_i}$$
 <br>
 
 **보정된 pooled estimate** 제시 → 원래 결과와 비교
+
+## 심화: 이번 강의에서 제외
+
+**Meta-regression**
+
+- I² 높을 때: 이질성의 **원인**을 찾고 싶다
+- 연구 특성(출판년도, 평균나이, 용량 등)을 **공변량**으로 회귀분석
+- 예: "출판년도가 최근일수록 효과가 작아지는가?"
+
+<br>
+
+**Network Meta-analysis (NMA)**
+
+- A vs B, B vs C 연구는 있는데 A vs C는 없다?
+- **간접 비교**로 A vs C 추정 가능
+- 여러 치료법을 **순위**로 비교 (SUCRA)
+
+```
+    A ─── B
+     \   /
+      \ /
+       C
+```
+
 
 ## 실습: openstat.ai 
 
