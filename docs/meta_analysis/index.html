@@ -6,8 +6,8 @@
 <script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.6.42">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.6.39">
 
   <meta name="author" content="김진섭">
   <meta name="dcterms.date" content="2026-02-03">
@@ -95,7 +95,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-9e84472c89ec876f4c353635c15abe43.css">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-dd39fbbabf720be66b06274ca3d2aacb.css">
   <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -472,9 +472,9 @@ Included         최종 포함 (n=50)</code></pre>
 <h2>RR, OR, RD: 언제 쓰나?</h2>
 <table class="caption-top">
 <colgroup>
-<col style="width: 26%">
-<col style="width: 26%">
-<col style="width: 47%">
+<col style="width: 10%">
+<col style="width: 50%">
+<col style="width: 39%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1037,6 +1037,972 @@ Included         최종 포함 (n=50)</code></pre>
 <h2>실습: openstat.ai</h2>
 
 <img data-src="example/openstat.png" class="r-stretch"></section>
+<section id="실습-r" class="slide level2">
+<h2>실습: R</h2>
+<p><strong>R에서 메타분석을 하기 위해서는 meta 패키지 필요</strong></p>
+<p>다음 코드를 통해 meta패키지를 설치해봅시다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">install.packages</span>(<span class="st">'meta'</span>)</span>
+<span id="cb7-2"><a href=""></a><span class="fu">library</span>(meta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="실습-meta-패키지의-기능1" class="slide level2">
+<h2>실습: meta 패키지의 기능(1)</h2>
+<p><strong>meta 패키지 내의 각종 method 소개</strong></p>
+<p>연속형 자료의 메타분석 -&gt; metacont</p>
+<p>이진형 자료의 메타분석 -&gt; metabin</p>
+<p>메타분석에서 IV 방법 사용할 때 -&gt; metagen</p>
+</section>
+<section id="실습-meta-패키지의-기능2" class="slide level2">
+<h2>실습: meta 패키지의 기능(2)</h2>
+<p><strong>meta 패키지 내의 각종 method 소개</strong></p>
+<p>상관관계에 대한 메타분석 -&gt; metacor</p>
+<p>평균에 대한 메타분석 -&gt; metamean</p>
+<p>비율에 대한 메타분석 -&gt; metaprop</p>
+<p>발생률에 대한 메타분석 -&gt; metarate</p>
+</section>
+<section id="실습-meta-패키지의-기능3" class="slide level2">
+<h2>실습: meta 패키지의 기능(3)</h2>
+<p><strong>meta 패키지 내의 각종 method 소개-plot</strong></p>
+<p>Forest plot -&gt; forest.meta, forest.metabind</p>
+<p>Funnel plot -&gt; funnel.meta</p>
+<p>Drapery plot -&gt; drapery</p>
+</section>
+<section id="예제-데이터-소개-woodyplants" class="slide level2">
+<h2>예제 데이터 소개: woodyplants</h2>
+<p><strong>meta 패키지의 내장 데이터</strong></p>
+<ul>
+<li><p><strong>주제:</strong> 대기 중 CO2​ 농도 증가가 목본식물(Woody Plants)의 성장에 미치는 영향</p></li>
+<li><p><strong>변수:</strong> 바이오매스(Biomass, 무게)</p></li>
+<li><p><strong>실험군(Experimental)</strong> : CO2​ 농도 높음</p></li>
+<li><p><strong>대조군(Control)</strong>: 일반 대기 상태</p></li>
+</ul>
+<p><strong>특이사항:</strong> 다양한 종(Species)이 섞여 있음-&gt;<strong>식물들의 scale차이가 존재</strong></p>
+</section>
+<section id="예제-데이터-소개-woodyplants-1" class="slide level2">
+<h2>예제 데이터 소개: woodyplants</h2>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-3-1.png" width="960" class="r-stretch"></section>
+<section id="scale-차이를-고려하지-않았을-때-md" class="slide level2">
+<h2>Scale 차이를 고려하지 않았을 때-MD</h2>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-4-1.png" style="width:100.0%" class="r-stretch"></section>
+<section id="scale-차이를-고려할-때---smd" class="slide level2">
+<h2>Scale 차이를 고려할 때 - SMD</h2>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-5-1.png" style="width:100.0%" class="r-stretch"></section>
+<section id="r-실습-예제---forest-plot-옵션-변화-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (1)</h2>
+<h3 id="기본-출력">기본 출력</h3>
+<p>아무 옵션 없이 기본 forest plot을 출력해봅시다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="fu">forest</span>(m_smd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><p>고정효과(Common effect)와 랜덤효과(Random effects) 모두 표시</p></li>
+<li><p>기본 레이아웃 적용</p></li>
+<li><p>모든 열이 기본값으로 표시</p></li>
+</ul>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-1-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (1)</h2>
+<h3 id="기본-출력-1">기본 출력</h3>
+
+<img data-src="images/clipboard-1030888938.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="r-실습-예제---forest-plot-옵션-변화-2" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (2)</h2>
+<h3 id="layout-변경">layout 변경</h3>
+<p><code>layout</code> 옵션으로 전체적인 스타일을 변경할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">forest</span>(m_smd,</span>
+<span id="cb9-2"><a href=""></a>       <span class="at">layout =</span> <span class="st">"JAMA"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>layout 값</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>"meta"</code></td>
+<td>기본 스타일</td>
+</tr>
+<tr class="even">
+<td><code>"JAMA"</code></td>
+<td>JAMA 저널 스타일</td>
+</tr>
+<tr class="odd">
+<td><code>"RevMan5"</code></td>
+<td>Cochrane Review Manager 스타일</td>
+</tr>
+<tr class="even">
+<td><code>"BMJ"</code></td>
+<td>BMJ 저널 스타일</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-2-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (2)</h2>
+<h3 id="layout-변경-1">layout 변경</h3>
+
+<img data-src="images/clipboard-3736888677.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="r-실습-예제---forest-plot-옵션-변화-3" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (3)</h2>
+<h3 id="고정효과-모델-숨기기">고정효과 모델 숨기기</h3>
+<p><code>common = FALSE</code>로 고정효과 모델을 숨길 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="fu">forest</span>(m_smd,</span>
+<span id="cb10-2"><a href=""></a>       <span class="at">common =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>옵션</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>common = FALSE</code></td>
+<td>고정효과 모델 숨김</td>
+</tr>
+<tr class="even">
+<td><code>random = FALSE</code></td>
+<td>랜덤효과 모델 숨김</td>
+</tr>
+<tr class="odd">
+<td><code>overall = FALSE</code></td>
+<td>전체 요약 효과 숨김</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>참고</strong>: 구버전에서는 <code>comb.fixed</code>, <code>comb.random</code> 사용</p>
+</blockquote>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-3-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (3)</h2>
+<h3 id="고정효과-모델-숨기기-1">고정효과 모델 숨기기</h3>
+
+<img data-src="images/clipboard-1138380893.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="r-실습-예제---forest-plot-옵션-변화-4" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (4)</h2>
+<h3 id="라벨-텍스트-변경">라벨 텍스트 변경</h3>
+<p>요약 효과의 라벨을 원하는 텍스트로 변경할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">forest</span>(m_smd,</span>
+<span id="cb11-2"><a href=""></a>       <span class="at">common =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb11-3"><a href=""></a>       <span class="at">text.random =</span> <span class="st">"Overall Effect"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>옵션</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>text.random</code></td>
+<td>랜덤효과 라벨</td>
+</tr>
+<tr class="even">
+<td><code>text.common</code></td>
+<td>고정효과 라벨</td>
+</tr>
+<tr class="odd">
+<td><code>text.predict</code></td>
+<td>예측구간 라벨</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-4-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (4)</h2>
+<h3 id="라벨-텍스트-변경-1">라벨 텍스트 변경</h3>
+
+<img data-src="images/clipboard-2213654197.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="r-실습-예제---forest-plot-옵션-변화-5" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (5)</h2>
+<h3 id="예측구간prediction-interval-추가">예측구간(Prediction Interval) 추가</h3>
+<p><code>prediction = TRUE</code>로 예측구간을 표시할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a><span class="fu">forest</span>(m_smd,</span>
+<span id="cb12-2"><a href=""></a>       <span class="at">common =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb12-3"><a href=""></a>       <span class="at">text.random =</span> <span class="st">"Overall Effect"</span>,</span>
+<span id="cb12-4"><a href=""></a>       <span class="at">prediction =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><strong>신뢰구간(CI)</strong>: 모집단 평균 효과의 불확실성</li>
+<li><strong>예측구간(PI)</strong>: 향후 개별 연구 효과가 나타날 범위</li>
+</ul>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-5-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (5)</h2>
+<h3 id="예측구간prediction-interval-추가-1">예측구간(Prediction Interval) 추가</h3>
+
+<img data-src="images/clipboard-2213654197.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="r-실습-예제---forest-plot-옵션-변화-6" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (6)</h2>
+<h3 id="x축-범위-및-눈금-조정">x축 범위 및 눈금 조정</h3>
+<p><code>xlim</code>과 <code>at</code>으로 x축을 조정할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a><span class="fu">forest</span>(m_smd,</span>
+<span id="cb13-2"><a href=""></a>       <span class="at">common =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb13-3"><a href=""></a>       <span class="at">text.random =</span> <span class="st">"Overall Effect"</span>,</span>
+<span id="cb13-4"><a href=""></a>       <span class="at">prediction =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-5"><a href=""></a>       <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb13-6"><a href=""></a>       <span class="at">at =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>옵션</th>
+<th>설명</th>
+<th>예시</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>xlim</code></td>
+<td>x축 범위</td>
+<td><code>c(-2, 2)</code></td>
+</tr>
+<tr class="even">
+<td><code>at</code></td>
+<td>눈금 위치</td>
+<td><code>c(-2, -1, 0, 1, 2)</code></td>
+</tr>
+<tr class="odd">
+<td><code>ref</code></td>
+<td>기준선 위치</td>
+<td><code>0</code> (SMD), <code>1</code> (OR/RR)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-6-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (6)</h2>
+<h3 id="x축-범위-및-눈금-조정-1">x축 범위 및 눈금 조정</h3>
+
+<img data-src="images/clipboard-1135664590.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="r-실습-예제---forest-plot-옵션-변화-7" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (7)</h2>
+<h3 id="축-라벨-추가">축 라벨 추가</h3>
+<p><code>label.left</code>, <code>label.right</code>로 방향성을 명시할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="fu">forest</span>(m_smd,</span>
+<span id="cb14-2"><a href=""></a>       <span class="at">common =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb14-3"><a href=""></a>       <span class="at">text.random =</span> <span class="st">"Overall Effect"</span>,</span>
+<span id="cb14-4"><a href=""></a>       <span class="at">prediction =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-5"><a href=""></a>       <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb14-6"><a href=""></a>       <span class="at">at =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb14-7"><a href=""></a>       <span class="at">label.left =</span> <span class="st">"Favours Control"</span>,</span>
+<span id="cb14-8"><a href=""></a>       <span class="at">label.right =</span> <span class="st">"Favours CO2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>기준선 왼쪽/오른쪽이 무엇을 의미하는지 명확히 표시</li>
+<li>독자가 결과를 해석하기 쉬워짐</li>
+</ul>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-7-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (7)</h2>
+<h3 id="축-라벨-추가-1">축 라벨 추가</h3>
+
+<img data-src="images/clipboard-3016209676.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="r-실습-예제---forest-plot-옵션-변화-8" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (8)</h2>
+<h3 id="이질성-통계량-표시-조정">이질성 통계량 표시 조정</h3>
+<p>이질성 관련 통계량 표시를 세부 조정할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="fu">forest</span>(m_smd,</span>
+<span id="cb15-2"><a href=""></a>       <span class="at">common =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb15-3"><a href=""></a>       <span class="at">text.random =</span> <span class="st">"Overall Effect"</span>,</span>
+<span id="cb15-4"><a href=""></a>       <span class="at">prediction =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb15-5"><a href=""></a>       <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb15-6"><a href=""></a>       <span class="at">at =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb15-7"><a href=""></a>       <span class="at">label.left =</span> <span class="st">"Favours Control"</span>,</span>
+<span id="cb15-8"><a href=""></a>       <span class="at">label.right =</span> <span class="st">"Favours CO2"</span>,</span>
+<span id="cb15-9"><a href=""></a>       <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb15-10"><a href=""></a>       <span class="at">digits.pval =</span> <span class="dv">3</span>,</span>
+<span id="cb15-11"><a href=""></a>       <span class="at">print.I2 =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb15-12"><a href=""></a>       <span class="at">print.tau2 =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb15-13"><a href=""></a>       <span class="at">print.pval.Q =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>옵션</th>
+<th>표시 내용</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>print.I2</code></td>
+<td>I² 통계량</td>
+</tr>
+<tr class="even">
+<td><code>print.tau2</code></td>
+<td>τ² (between-study variance)</td>
+</tr>
+<tr class="odd">
+<td><code>print.pval.Q</code></td>
+<td>Q검정 p-value</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-8-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (8)</h2>
+<h3 id="이질성-통계량-표시-조정-1">이질성 통계량 표시 조정</h3>
+
+<img data-src="images/clipboard-986804494.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="r-실습-예제---forest-plot-옵션-변화-9" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (9)</h2>
+<h3 id="색상-변경">색상 변경</h3>
+<p>다이아몬드와 사각형의 색상을 변경할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a><span class="fu">forest</span>(m_smd,</span>
+<span id="cb16-2"><a href=""></a>       <span class="at">common =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb16-3"><a href=""></a>       <span class="at">text.random =</span> <span class="st">"Overall Effect"</span>,</span>
+<span id="cb16-4"><a href=""></a>       <span class="at">prediction =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-5"><a href=""></a>       <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb16-6"><a href=""></a>       <span class="at">at =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb16-7"><a href=""></a>       <span class="at">label.left =</span> <span class="st">"Favours Control"</span>,</span>
+<span id="cb16-8"><a href=""></a>       <span class="at">label.right =</span> <span class="st">"Favours CO2"</span>,</span>
+<span id="cb16-9"><a href=""></a>       <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb16-10"><a href=""></a>       <span class="at">digits.pval =</span> <span class="dv">3</span>,</span>
+<span id="cb16-11"><a href=""></a>       <span class="at">print.I2 =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-12"><a href=""></a>       <span class="at">print.tau2 =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-13"><a href=""></a>       <span class="at">print.pval.Q =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-14"><a href=""></a>       <span class="at">col.diamond =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb16-15"><a href=""></a>       <span class="at">col.predict =</span> <span class="st">"darkgray"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>옵션</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>col.diamond</code></td>
+<td>요약 다이아몬드 색상</td>
+</tr>
+<tr class="even">
+<td><code>col.diamond.random</code></td>
+<td>랜덤효과 다이아몬드 색상</td>
+</tr>
+<tr class="odd">
+<td><code>col.diamond.common</code></td>
+<td>고정효과 다이아몬드 색상</td>
+</tr>
+<tr class="even">
+<td><code>col.square</code></td>
+<td>개별 연구 사각형 색상</td>
+</tr>
+<tr class="odd">
+<td><code>col.predict</code></td>
+<td>예측구간 색상</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-9-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (9)</h2>
+<h3 id="색상-변경-1">색상 변경</h3>
+
+<img data-src="images/clipboard-2111339296.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="r-실습-예제---forest-plot-옵션-변화-10" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (10)</h2>
+<h3 id="표시할-열column-선택">표시할 열(Column) 선택</h3>
+<p><code>leftcols</code>, <code>rightcols</code>로 표시할 정보를 선택합니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a><span class="fu">forest</span>(m_smd,</span>
+<span id="cb17-2"><a href=""></a>       <span class="at">common =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb17-3"><a href=""></a>       <span class="at">text.random =</span> <span class="st">"Overall Effect"</span>,</span>
+<span id="cb17-4"><a href=""></a>       <span class="at">prediction =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb17-5"><a href=""></a>       <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb17-6"><a href=""></a>       <span class="at">at =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb17-7"><a href=""></a>       <span class="at">label.left =</span> <span class="st">"Favours Control"</span>,</span>
+<span id="cb17-8"><a href=""></a>       <span class="at">label.right =</span> <span class="st">"Favours CO2"</span>,</span>
+<span id="cb17-9"><a href=""></a>       <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb17-10"><a href=""></a>       <span class="at">col.diamond =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb17-11"><a href=""></a>       <span class="at">col.predict =</span> <span class="st">"darkgray"</span>,</span>
+<span id="cb17-12"><a href=""></a>       <span class="at">leftcols =</span> <span class="fu">c</span>(<span class="st">"studlab"</span>, <span class="st">"n.e"</span>, <span class="st">"n.c"</span>),</span>
+<span id="cb17-13"><a href=""></a>       <span class="at">rightcols =</span> <span class="fu">c</span>(<span class="st">"effect"</span>, <span class="st">"ci"</span>, <span class="st">"w.random"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><code>leftcols</code>: 그래프 왼쪽에 표시할 열</li>
+<li><code>rightcols</code>: 그래프 오른쪽에 표시할 열</li>
+</ul>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-10-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (10)</h2>
+<h3 id="표시할-열column-선택-1">표시할 열(Column) 선택</h3>
+
+<img data-src="images/clipboard-627326277.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="r-실습-예제---forest-plot-옵션-변화-11" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (11)</h2>
+<h3 id="열-라벨-변경">열 라벨 변경</h3>
+<p><code>leftlabs</code>, <code>rightlabs</code>로 열 제목을 변경합니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a><span class="fu">forest</span>(m_smd,</span>
+<span id="cb18-2"><a href=""></a>       <span class="at">common =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb18-3"><a href=""></a>       <span class="at">text.random =</span> <span class="st">"Overall Effect"</span>,</span>
+<span id="cb18-4"><a href=""></a>       <span class="at">prediction =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb18-5"><a href=""></a>       <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb18-6"><a href=""></a>       <span class="at">at =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb18-7"><a href=""></a>       <span class="at">label.left =</span> <span class="st">"Favours Control"</span>,</span>
+<span id="cb18-8"><a href=""></a>       <span class="at">label.right =</span> <span class="st">"Favours CO2"</span>,</span>
+<span id="cb18-9"><a href=""></a>       <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb18-10"><a href=""></a>       <span class="at">col.diamond =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb18-11"><a href=""></a>       <span class="at">col.predict =</span> <span class="st">"darkgray"</span>,</span>
+<span id="cb18-12"><a href=""></a>       <span class="at">leftcols =</span> <span class="fu">c</span>(<span class="st">"studlab"</span>, <span class="st">"n.e"</span>, <span class="st">"n.c"</span>),</span>
+<span id="cb18-13"><a href=""></a>       <span class="at">leftlabs =</span> <span class="fu">c</span>(<span class="st">"Study"</span>, <span class="st">"N(Exp)"</span>, <span class="st">"N(Ctrl)"</span>),</span>
+<span id="cb18-14"><a href=""></a>       <span class="at">rightcols =</span> <span class="fu">c</span>(<span class="st">"effect"</span>, <span class="st">"ci"</span>, <span class="st">"w.random"</span>),</span>
+<span id="cb18-15"><a href=""></a>       <span class="at">rightlabs =</span> <span class="fu">c</span>(<span class="st">"SMD"</span>, <span class="st">"95% CI"</span>, <span class="st">"Weight(%)"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-11-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (11)</h2>
+<h3 id="열-라벨-변경-1">열 라벨 변경</h3>
+
+<img data-src="images/clipboard-1287873953.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="r-실습-예제---forest-plot-옵션-변화-12" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (12)</h2>
+<h3 id="정렬-순서-변경">정렬 순서 변경</h3>
+<p><code>sortvar</code>로 연구 표시 순서를 변경할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a><span class="fu">forest</span>(m_smd,</span>
+<span id="cb19-2"><a href=""></a>       <span class="at">common =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-3"><a href=""></a>       <span class="at">text.random =</span> <span class="st">"Overall Effect"</span>,</span>
+<span id="cb19-4"><a href=""></a>       <span class="at">prediction =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb19-5"><a href=""></a>       <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb19-6"><a href=""></a>       <span class="at">at =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb19-7"><a href=""></a>       <span class="at">label.left =</span> <span class="st">"Favours Control"</span>,</span>
+<span id="cb19-8"><a href=""></a>       <span class="at">label.right =</span> <span class="st">"Favours CO2"</span>,</span>
+<span id="cb19-9"><a href=""></a>       <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb19-10"><a href=""></a>       <span class="at">col.diamond =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb19-11"><a href=""></a>       <span class="at">col.predict =</span> <span class="st">"darkgray"</span>,</span>
+<span id="cb19-12"><a href=""></a>       <span class="at">leftcols =</span> <span class="fu">c</span>(<span class="st">"studlab"</span>, <span class="st">"n.e"</span>, <span class="st">"n.c"</span>),</span>
+<span id="cb19-13"><a href=""></a>       <span class="at">leftlabs =</span> <span class="fu">c</span>(<span class="st">"Study"</span>, <span class="st">"N(Exp)"</span>, <span class="st">"N(Ctrl)"</span>),</span>
+<span id="cb19-14"><a href=""></a>       <span class="at">rightcols =</span> <span class="fu">c</span>(<span class="st">"effect"</span>, <span class="st">"ci"</span>, <span class="st">"w.random"</span>),</span>
+<span id="cb19-15"><a href=""></a>       <span class="at">rightlabs =</span> <span class="fu">c</span>(<span class="st">"SMD"</span>, <span class="st">"95% CI"</span>, <span class="st">"Weight(%)"</span>),</span>
+<span id="cb19-16"><a href=""></a>       <span class="at">sortvar =</span> TE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-12-1" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (12)</h2>
+<h3 id="정렬-순서-변경-1">정렬 순서 변경</h3>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>sortvar 값</th>
+<th>정렬 기준</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>TE</code></td>
+<td>효과크기 순</td>
+</tr>
+<tr class="even">
+<td><code>-TE</code></td>
+<td>효과크기 역순</td>
+</tr>
+<tr class="odd">
+<td><code>seTE</code></td>
+<td>표준오차 순</td>
+</tr>
+<tr class="even">
+<td><code>year</code></td>
+<td>연도순 (변수 있을 때)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="r-실습-예제---forest-plot-옵션-변화-12-2" class="slide level2">
+<h2>R 실습 예제 - Forest plot 옵션 변화 (12)</h2>
+<h3 id="정렬-순서-변경-2">정렬 순서 변경</h3>
+
+<img data-src="images/clipboard-2254817901.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="subgroup-분석" class="slide level2">
+<h2>Subgroup 분석</h2>
+<p>특정 변수에 따라 효과가 다른지 확인</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>m_sub <span class="ot">&lt;-</span> <span class="fu">metacont</span>(</span>
+<span id="cb20-2"><a href=""></a>  <span class="at">n.e =</span> n.elev, <span class="at">mean.e =</span> mean.elev, <span class="at">sd.e =</span> sd.elev,</span>
+<span id="cb20-3"><a href=""></a>  <span class="at">n.c =</span> n.amb, <span class="at">mean.c =</span> mean.amb, <span class="at">sd.c =</span> sd.amb,</span>
+<span id="cb20-4"><a href=""></a>  <span class="at">studlab =</span> papno,</span>
+<span id="cb20-5"><a href=""></a>  <span class="at">data =</span> woodyplants,</span>
+<span id="cb20-6"><a href=""></a>  <span class="at">sm =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb20-7"><a href=""></a>  <span class="at">random =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb20-8"><a href=""></a>  <span class="at">common =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb20-9"><a href=""></a>  <span class="at">subgroup =</span> treat    <span class="co"># subgroup 변수 지정</span></span>
+<span id="cb20-10"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="subgroup-forest-plot" class="slide level2">
+<h2>Subgroup Forest Plot</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href=""></a><span class="fu">forest</span>(m_sub,</span>
+<span id="cb21-2"><a href=""></a>       <span class="at">subgroup =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb21-3"><a href=""></a>       <span class="at">print.subgroup.labels =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="subgroup-forest-plot-1" class="slide level2">
+<h2>Subgroup Forest Plot</h2>
+
+<img data-src="images/clipboard-843260697.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="subgroup-forest-plot-옵션" class="slide level2">
+<h2>Subgroup Forest Plot 옵션</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">옵션</th>
+<th style="text-align: left;">설명</th>
+<th style="text-align: left;">예시</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>subgroup</code></td>
+<td style="text-align: left;">subgroup별 표시</td>
+<td style="text-align: left;">TRUE / FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>print.subgroup.labels</code></td>
+<td style="text-align: left;">subgroup 라벨 표시</td>
+<td style="text-align: left;">TRUE / FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>subgroup.hetstat</code></td>
+<td style="text-align: left;">subgroup별 이질성 표시</td>
+<td style="text-align: left;">TRUE / FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>test.subgroup</code></td>
+<td style="text-align: left;">subgroup 간 차이 검정</td>
+<td style="text-align: left;">TRUE / FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>col.subgroup</code></td>
+<td style="text-align: left;">subgroup 라벨 색상</td>
+<td style="text-align: left;">“blue”</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="특정-subgroup만-선택" class="slide level2">
+<h2>특정 Subgroup만 선택</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a><span class="co"># 특정 treat만 분석</span></span>
+<span id="cb22-2"><a href=""></a>m_subset <span class="ot">&lt;-</span> <span class="fu">metacont</span>(</span>
+<span id="cb22-3"><a href=""></a>  <span class="at">n.e =</span> n.elev, <span class="at">mean.e =</span> mean.elev, <span class="at">sd.e =</span> sd.elev,</span>
+<span id="cb22-4"><a href=""></a>  <span class="at">n.c =</span> n.amb, <span class="at">mean.c =</span> mean.amb, <span class="at">sd.c =</span> sd.amb,</span>
+<span id="cb22-5"><a href=""></a>  <span class="at">studlab =</span> papno,</span>
+<span id="cb22-6"><a href=""></a>  <span class="at">data =</span> woodyplants,</span>
+<span id="cb22-7"><a href=""></a>  <span class="at">sm =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb22-8"><a href=""></a>  <span class="at">subset =</span> treat <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"temp"</span>, <span class="st">"light"</span>),</span>
+<span id="cb22-9"><a href=""></a>  <span class="at">subgroup =</span> treat</span>
+<span id="cb22-10"><a href=""></a>)</span>
+<span id="cb22-11"><a href=""></a></span>
+<span id="cb22-12"><a href=""></a><span class="fu">forest</span>(m_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="특정-subgroup만-선택-1" class="slide level2">
+<h2>특정 Subgroup만 선택</h2>
+
+<img data-src="images/clipboard-4110964433.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="subgroup-결과만-보기" class="slide level2">
+<h2>Subgroup 결과만 보기</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a><span class="co"># subgroup별 요약만 출력</span></span>
+<span id="cb23-2"><a href=""></a><span class="fu">summary</span>(m_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>확인할 것</strong>:</p>
+<ul>
+<li>각 subgroup의 요약 효과크기</li>
+<li>subgroup 간 이질성 (between-group heterogeneity)</li>
+</ul>
+</section>
+<section id="funnel-plot-실습-데이터" class="slide level2">
+<h2>Funnel Plot 실습 데이터</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a>pubbias_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb24-2"><a href=""></a>  <span class="at">study =</span> <span class="fu">paste</span>(<span class="st">"Study"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">15</span>),</span>
+<span id="cb24-3"><a href=""></a>  <span class="at">n.e =</span> <span class="fu">c</span>(<span class="dv">120</span>, <span class="dv">85</span>, <span class="dv">90</span>, <span class="dv">150</span>, <span class="dv">45</span>, <span class="dv">60</span>, <span class="dv">200</span>, <span class="dv">35</span>, <span class="dv">75</span>, <span class="dv">100</span>, <span class="dv">40</span>, <span class="dv">55</span>, <span class="dv">180</span>, <span class="dv">65</span>, <span class="dv">95</span>),</span>
+<span id="cb24-4"><a href=""></a>  <span class="at">mean.e =</span> <span class="fu">c</span>(<span class="dv">52</span>, <span class="dv">48</span>, <span class="dv">55</span>, <span class="dv">51</span>, <span class="dv">62</span>, <span class="dv">58</span>, <span class="dv">50</span>, <span class="dv">68</span>, <span class="dv">54</span>, <span class="dv">53</span>, <span class="dv">65</span>, <span class="dv">59</span>, <span class="dv">49</span>, <span class="dv">56</span>, <span class="dv">52</span>),</span>
+<span id="cb24-5"><a href=""></a>  <span class="at">sd.e =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">15</span>, <span class="dv">14</span>, <span class="dv">11</span>, <span class="dv">18</span>, <span class="dv">16</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">14</span>, <span class="dv">13</span>, <span class="dv">19</span>, <span class="dv">17</span>, <span class="dv">11</span>, <span class="dv">15</span>, <span class="dv">13</span>),</span>
+<span id="cb24-6"><a href=""></a>  <span class="at">n.c =</span> <span class="fu">c</span>(<span class="dv">118</span>, <span class="dv">82</span>, <span class="dv">88</span>, <span class="dv">148</span>, <span class="dv">47</span>, <span class="dv">62</span>, <span class="dv">198</span>, <span class="dv">33</span>, <span class="dv">73</span>, <span class="dv">102</span>, <span class="dv">42</span>, <span class="dv">58</span>, <span class="dv">178</span>, <span class="dv">63</span>, <span class="dv">93</span>),</span>
+<span id="cb24-7"><a href=""></a>  <span class="at">mean.c =</span> <span class="fu">c</span>(<span class="dv">48</span>, <span class="dv">46</span>, <span class="dv">50</span>, <span class="dv">48</span>, <span class="dv">52</span>, <span class="dv">50</span>, <span class="dv">48</span>, <span class="dv">55</span>, <span class="dv">49</span>, <span class="dv">49</span>, <span class="dv">53</span>, <span class="dv">51</span>, <span class="dv">47</span>, <span class="dv">50</span>, <span class="dv">48</span>),</span>
+<span id="cb24-8"><a href=""></a>  <span class="at">sd.c =</span> <span class="fu">c</span>(<span class="dv">13</span>, <span class="dv">14</span>, <span class="dv">15</span>, <span class="dv">12</span>, <span class="dv">17</span>, <span class="dv">15</span>, <span class="dv">11</span>, <span class="dv">19</span>, <span class="dv">13</span>, <span class="dv">14</span>, <span class="dv">18</span>, <span class="dv">16</span>, <span class="dv">10</span>, <span class="dv">14</span>, <span class="dv">12</span>)</span>
+<span id="cb24-9"><a href=""></a>)</span>
+<span id="cb24-10"><a href=""></a></span>
+<span id="cb24-11"><a href=""></a>m <span class="ot">&lt;-</span> <span class="fu">metacont</span>(</span>
+<span id="cb24-12"><a href=""></a>  <span class="at">n.e =</span> n.e, <span class="at">mean.e =</span> mean.e, <span class="at">sd.e =</span> sd.e,</span>
+<span id="cb24-13"><a href=""></a>  <span class="at">n.c =</span> n.c, <span class="at">mean.c =</span> mean.c, <span class="at">sd.c =</span> sd.c,</span>
+<span id="cb24-14"><a href=""></a>  <span class="at">studlab =</span> study,</span>
+<span id="cb24-15"><a href=""></a>  <span class="at">data =</span> pubbias_data,</span>
+<span id="cb24-16"><a href=""></a>  <span class="at">sm =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb24-17"><a href=""></a>  <span class="at">random =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb24-18"><a href=""></a>  <span class="at">common =</span> <span class="cn">FALSE</span></span>
+<span id="cb24-19"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="기본-funnel-plot" class="slide level2">
+<h2>기본 Funnel Plot</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a><span class="fu">funnel</span>(m)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="index_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"></section>
+<section id="기본-funnel-plot-1" class="slide level2">
+<h2>기본 Funnel Plot</h2>
+
+<img data-src="images/clipboard-571749440.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="funnel-주요-옵션" class="slide level2">
+<h2>funnel() 주요 옵션</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">옵션</th>
+<th style="text-align: left;">설명</th>
+<th style="text-align: left;">예시</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>studlab</code></td>
+<td style="text-align: left;">연구명 표시</td>
+<td style="text-align: left;">TRUE / FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>xlim</code></td>
+<td style="text-align: left;">X축 범위</td>
+<td style="text-align: left;">c(-2, 2)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>ylim</code></td>
+<td style="text-align: left;">Y축 범위</td>
+<td style="text-align: left;">c(0, 1)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>xlab</code></td>
+<td style="text-align: left;">X축 라벨</td>
+<td style="text-align: left;">“SMD”</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>ylab</code></td>
+<td style="text-align: left;">Y축 라벨</td>
+<td style="text-align: left;">“Standard Error”</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>contour.levels</code></td>
+<td style="text-align: left;">등고선 수준</td>
+<td style="text-align: left;">c(0.9, 0.95, 0.99)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>col.contour</code></td>
+<td style="text-align: left;">등고선 색상</td>
+<td style="text-align: left;">c(“gray75”, “gray85”, “gray95”)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="funnel-스타일-옵션" class="slide level2">
+<h2>funnel() 스타일 옵션</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">옵션</th>
+<th style="text-align: left;">설명</th>
+<th style="text-align: left;">예시</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>pch</code></td>
+<td style="text-align: left;">점 모양</td>
+<td style="text-align: left;">19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>col</code></td>
+<td style="text-align: left;">점 색상</td>
+<td style="text-align: left;">“blue”</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>bg</code></td>
+<td style="text-align: left;">점 배경색</td>
+<td style="text-align: left;">“lightblue”</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>cex</code></td>
+<td style="text-align: left;">점 크기</td>
+<td style="text-align: left;">1.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>lwd</code></td>
+<td style="text-align: left;">선 두께</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>lty</code></td>
+<td style="text-align: left;">선 스타일</td>
+<td style="text-align: left;">1=실선, 2=점선</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="연구명-표시" class="slide level2">
+<h2>연구명 표시</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a><span class="fu">funnel</span>(m, <span class="at">studlab =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="index_files/figure-revealjs/unnamed-chunk-24-1.png" width="960" class="r-stretch"></section>
+<section id="축-범위-및-라벨-설정" class="slide level2">
+<h2>축 범위 및 라벨 설정</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a><span class="fu">funnel</span>(m,</span>
+<span id="cb27-2"><a href=""></a>       <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb27-3"><a href=""></a>       <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.8</span>),</span>
+<span id="cb27-4"><a href=""></a>       <span class="at">xlab =</span> <span class="st">"Standardized Mean Difference"</span>,</span>
+<span id="cb27-5"><a href=""></a>       <span class="at">ylab =</span> <span class="st">"Standard Error"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="축-범위-및-라벨-설정-1" class="slide level2">
+<h2>축 범위 및 라벨 설정</h2>
+
+<img data-src="images/clipboard-4080650365.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="contour-enhanced-funnel-plot" class="slide level2">
+<h2>Contour-Enhanced Funnel Plot</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a><span class="fu">funnel</span>(m,</span>
+<span id="cb28-2"><a href=""></a>       <span class="at">contour.levels =</span> <span class="fu">c</span>(<span class="fl">0.90</span>, <span class="fl">0.95</span>, <span class="fl">0.99</span>),</span>
+<span id="cb28-3"><a href=""></a>       <span class="at">col.contour =</span> <span class="fu">c</span>(<span class="st">"darkgray"</span>, <span class="st">"gray"</span>, <span class="st">"lightgray"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">영역</th>
+<th style="text-align: left;">의미</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">진한 회색</td>
+<td style="text-align: left;">p &lt; 0.01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">중간 회색</td>
+<td style="text-align: left;">0.01 ≤ p &lt; 0.05</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">연한 회색</td>
+<td style="text-align: left;">0.05 ≤ p &lt; 0.10</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="contour-enhanced-funnel-plot-1" class="slide level2">
+<h2>Contour-Enhanced Funnel Plot</h2>
+
+<img data-src="images/clipboard-1194049476.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="점선-스타일-변경" class="slide level2">
+<h2>점/선 스타일 변경</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a><span class="fu">funnel</span>(m,</span>
+<span id="cb29-2"><a href=""></a>       <span class="at">pch =</span> <span class="dv">21</span>,             <span class="co"># 테두리 있는 원</span></span>
+<span id="cb29-3"><a href=""></a>       <span class="at">col =</span> <span class="st">"darkblue"</span>,     <span class="co"># 테두리 색</span></span>
+<span id="cb29-4"><a href=""></a>       <span class="at">bg =</span> <span class="st">"lightblue"</span>,     <span class="co"># 채우기 색</span></span>
+<span id="cb29-5"><a href=""></a>       <span class="at">cex =</span> <span class="fl">1.5</span>,            <span class="co"># 점 크기</span></span>
+<span id="cb29-6"><a href=""></a>       <span class="at">lwd =</span> <span class="dv">2</span>)              <span class="co"># 선 두께</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>pch 값</strong>: 1=빈 원, 15=사각형, 16=채운 원, 17=삼각형, 19=채운 원, 21=테두리 원</p>
+</section>
+<section id="점선-스타일-변경-1" class="slide level2">
+<h2>점/선 스타일 변경</h2>
+
+<img data-src="images/clipboard-2225112377.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="종합-예제-완성된-funnel-plot" class="slide level2">
+<h2>종합 예제: 완성된 Funnel Plot</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a><span class="fu">funnel</span>(m,</span>
+<span id="cb30-2"><a href=""></a>       <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb30-3"><a href=""></a>       <span class="at">xlab =</span> <span class="st">"Standardized Mean Difference"</span>,</span>
+<span id="cb30-4"><a href=""></a>       <span class="at">ylab =</span> <span class="st">"Standard Error"</span>,</span>
+<span id="cb30-5"><a href=""></a>       <span class="at">contour.levels =</span> <span class="fu">c</span>(<span class="fl">0.90</span>, <span class="fl">0.95</span>, <span class="fl">0.99</span>),</span>
+<span id="cb30-6"><a href=""></a>       <span class="at">col.contour =</span> <span class="fu">c</span>(<span class="st">"darkgray"</span>, <span class="st">"gray"</span>, <span class="st">"lightgray"</span>),</span>
+<span id="cb30-7"><a href=""></a>       <span class="at">pch =</span> <span class="dv">19</span>,</span>
+<span id="cb30-8"><a href=""></a>       <span class="at">col =</span> <span class="st">"navy"</span>,</span>
+<span id="cb30-9"><a href=""></a>       <span class="at">cex =</span> <span class="fl">1.2</span>,</span>
+<span id="cb30-10"><a href=""></a>       <span class="at">lwd =</span> <span class="dv">2</span>,</span>
+<span id="cb30-11"><a href=""></a>       <span class="at">studlab =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb30-12"><a href=""></a>       <span class="at">cex.studlab =</span> <span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="종합-예제-완성된-funnel-plot-1" class="slide level2">
+<h2>종합 예제: 완성된 Funnel Plot</h2>
+
+<img data-src="images/clipboard-3345704999.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%"></section>
+<section id="eggers-test" class="slide level2">
+<h2>Egger’s Test</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href=""></a><span class="fu">metabias</span>(m, <span class="at">method.bias =</span> <span class="st">"Egger"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear regression test of funnel plot asymmetry
+
+Test result: t = 7.30, df = 13, p-value &lt; 0.0001
+Bias estimate: 3.1811 (SE = 0.4359)
+
+Details:
+- multiplicative residual heterogeneity variance (tau^2 = 0.1845)
+- predictor: standard error
+- weight:    inverse variance
+- reference: Egger et al. (1997), BMJ</code></pre>
+</div>
+</div>
+<p><strong>해석</strong>:</p>
+<ul>
+<li>p &lt; 0.10 → 비대칭성 있음 (출판 편향 의심)</li>
+<li>p ≥ 0.10 → 비대칭성 증거 없음</li>
+</ul>
+</section>
+<section id="method.bias-옵션" class="slide level2">
+<h2>method.bias 옵션</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">옵션</th>
+<th style="text-align: left;">설명</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>method.bias = "Egger"</code></td>
+<td style="text-align: left;">Egger’s regression test</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>method.bias = "Begg"</code></td>
+<td style="text-align: left;">Begg’s rank correlation</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>method.bias = "Thompson"</code></td>
+<td style="text-align: left;">Thompson-Sharp test</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>plotit = TRUE</code></td>
+<td style="text-align: left;">시각화</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="trim-and-fill" class="slide level2">
+<h2>Trim and Fill</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href=""></a><span class="co"># Trim and fill 분석</span></span>
+<span id="cb33-2"><a href=""></a>tf <span class="ot">&lt;-</span> <span class="fu">trimfill</span>(m)</span>
+<span id="cb33-3"><a href=""></a></span>
+<span id="cb33-4"><a href=""></a><span class="co"># 결과 확인</span></span>
+<span id="cb33-5"><a href=""></a><span class="fu">summary</span>(tf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><code>k0</code>: 추정된 누락 연구 수</li>
+<li>보정된 요약 효과크기 확인</li>
+</ul>
+</section>
+<section id="trim-and-fill-1" class="slide level2">
+<h2>Trim and Fill</h2>
+<pre><code>                     SMD            95%-CI %W(random)
+Study 1           0.3188 [ 0.0631; 0.5746]        7.3
+Study 2           0.1371 [-0.1666; 0.4409]        5.2
+Study 3           0.3433 [ 0.0473; 0.6393]        5.5
+Study 4           0.2600 [ 0.0320; 0.4881]        9.2
+Study 5           0.5668 [ 0.1495; 0.9840]        2.8
+Study 6           0.5129 [ 0.1520; 0.8738]        3.7
+Study 7           0.1899 [-0.0070; 0.3869]       12.4
+Study 8           0.6583 [ 0.1693; 1.1473]        2.0
+Study 9           0.3680 [ 0.0430; 0.6931]        4.6
+Study 10          0.2949 [ 0.0175; 0.5722]        6.2
+Study 11          0.6427 [ 0.1982; 1.0873]        2.4
+Study 12          0.4817 [ 0.1074; 0.8561]        3.4
+Study 13          0.1898 [-0.0178; 0.3975]       11.1
+Study 14          0.4109 [ 0.0606; 0.7611]        3.9
+Study 15          0.3183 [ 0.0306; 0.6061]        5.8
+Filled: Study 12  0.0449 [-0.3294; 0.4193]        3.4
+Filled: Study 6   0.0138 [-0.3471; 0.3747]        3.7
+Filled: Study 5  -0.0401 [-0.4574; 0.3771]        2.8
+Filled: Study 11 -0.1161 [-0.5606; 0.3285]        2.4
+Filled: Study 8  -0.1317 [-0.6207; 0.3573]        2.0
+
+Number of studies: k = 20 (with 5 added studies)
+Number of observations: o = 3257 (o.e = 1630, o.c = 1627)
+
+                        SMD           95%-CI    z  p-value
+Random effects model 0.2633 [0.1940; 0.3327] 7.44 &lt; 0.0001
+
+Quantifying heterogeneity (with 95%-CIs):
+ tau^2 &lt; 0.0001 [0.0000; 0.0736]; tau = 0.0020 [0.0000; 0.2713]
+ I^2 = 22.0% [0.0%; 54.7%]; H = 1.13 [1.00; 1.49]
+
+Test of heterogeneity:
+     Q d.f. p-value
+ 24.37   19  0.1823
+
+Details of meta-analysis methods:
+- Inverse variance method
+- Restricted maximum-likelihood estimator for tau^2
+- Q-Profile method for confidence interval of tau^2 and tau
+- Calculation of I^2 based on Q
+- Trim-and-fill method to adjust for funnel plot asymmetry (L-estimator)</code></pre>
+</section>
+<section id="trim-and-fill-funnel-plot" class="slide level2">
+<h2>Trim and Fill Funnel Plot</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href=""></a><span class="fu">funnel</span>(tf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="index_files/figure-revealjs/unnamed-chunk-31-1.png" width="960" class="r-stretch"><ul>
+<li>흰 원(○): 원래 연구</li>
+<li>검은 원(●): 추정된 누락 연구</li>
+</ul>
+</section>
+<section id="trim-and-fill-옵션" class="slide level2">
+<h2>Trim and Fill 옵션</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href=""></a><span class="co"># 왼쪽만 채우기</span></span>
+<span id="cb36-2"><a href=""></a>tf_left <span class="ot">&lt;-</span> <span class="fu">trimfill</span>(m, <span class="at">left =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb36-3"><a href=""></a></span>
+<span id="cb36-4"><a href=""></a><span class="co"># 오른쪽만 채우기  </span></span>
+<span id="cb36-5"><a href=""></a>tf_right <span class="ot">&lt;-</span> <span class="fu">trimfill</span>(m, <span class="at">left =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb36-6"><a href=""></a></span>
+<span id="cb36-7"><a href=""></a><span class="co"># 결과 비교</span></span>
+<span id="cb36-8"><a href=""></a><span class="fu">summary</span>(tf_left)</span>
+<span id="cb36-9"><a href=""></a><span class="fu">summary</span>(tf_right)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="보정-전후-비교" class="slide level2">
+<h2>보정 전후 비교</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a><span class="co"># 원래 결과</span></span>
+<span id="cb37-2"><a href=""></a><span class="fu">summary</span>(m)</span>
+<span id="cb37-3"><a href=""></a></span>
+<span id="cb37-4"><a href=""></a><span class="co"># 보정 후 결과</span></span>
+<span id="cb37-5"><a href=""></a><span class="fu">summary</span>(tf)</span>
+<span id="cb37-6"><a href=""></a></span>
+<span id="cb37-7"><a href=""></a><span class="co"># 효과크기 비교</span></span>
+<span id="cb37-8"><a href=""></a><span class="fu">cat</span>(<span class="st">"원래:"</span>, m<span class="sc">$</span>TE.random, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb37-9"><a href=""></a><span class="fu">cat</span>(<span class="st">"보정:"</span>, tf<span class="sc">$</span>TE.random, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code>원래: 0.3126432 
+보정: 0.2633364 </code></pre>
+</section>
 <section id="executive-summary-1" class="slide level2">
 <h2>Executive summary</h2>
 <p><strong>동일한 결과지표를 가진 연구들을 합친다</strong></p>
